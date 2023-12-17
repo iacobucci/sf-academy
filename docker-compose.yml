@@ -1,30 +1,28 @@
-version: '3'
+version: '3.1'
 
 services:
-  web:
-    build: .
-    ports:
-      - "8080:8080"
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     depends_on:
-      - db
-  db:
-    image: "mysql"
-    environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: mydb
+      - database
     ports:
-      - "3306:3306"
-    command: --init-file /data/application/init.sql
-    volumes:
-      - ./sql/init.sql:/data/application/init.sql
-    # networks:
-    #   - mynetwork
+      - 8000:8000
+  frontend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+  database:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: sf
+    ports:
+      - 3306:3306
 
-# networks:
-#   mynetwork:
-#     name: mynetwork
-
-volumes:
-  db-data:
-
-
+networks:
+  sf:
+    driver: bridge
